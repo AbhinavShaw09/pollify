@@ -22,7 +22,7 @@ A real-time polling application built with Next.js and FastAPI that allows users
 Pollify follows a modern full-stack architecture with clear separation between frontend and backend services:
 
 ```
-┌─────────────────┐    HTTP/REST API    ┌─────────────────┐
+┌─────────────────┐    HTTP/REST API   ┌─────────────────┐
 │   Frontend      │◄──────────────────►│   Backend       │
 │   (Next.js)     │                    │   (FastAPI)     │
 │   Port: 3000    │                    │   Port: 8000    │
