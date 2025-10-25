@@ -13,10 +13,12 @@ export default function PollDetail({ params }: { params: Promise<{ id: string }>
     queryKey: ['vote-status', id],
     queryFn: () => {
       const token = localStorage.getItem("token")
+      if (!token) throw new Error("No token")
       return fetch(`http://localhost:8000/polls/${id}/vote-status`, {
         headers: { "Authorization": `Bearer ${token}` }
       }).then(res => res.json())
-    }
+    },
+    enabled: !!localStorage.getItem("token")
   })
 
   const hasVoted = voteStatus?.has_voted || false
@@ -42,6 +44,7 @@ export default function PollDetail({ params }: { params: Promise<{ id: string }>
   const voteMutation = useMutation({
     mutationFn: (option: string) => {
       const token = localStorage.getItem("token")
+      if (!token) throw new Error("No token")
       return fetch(`http://localhost:8000/polls/${id}/vote`, {
         method: "POST",
         headers: { 
@@ -60,6 +63,7 @@ export default function PollDetail({ params }: { params: Promise<{ id: string }>
   const commentMutation = useMutation({
     mutationFn: (content: string) => {
       const token = localStorage.getItem("token")
+      if (!token) throw new Error("No token")
       return fetch(`http://localhost:8000/polls/${id}/comments`, {
         method: "POST",
         headers: { 

@@ -6,6 +6,8 @@ import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { useRouter } from "next/navigation"
 import { useToast } from "@/components/ui/toast"
+import { TrendingUp } from "lucide-react"
+import { BackgroundRippleEffect } from "@/components/ui/background-ripple-effect"
 
 export default function LoginPage() {
   const [username, setUsername] = useState("")
@@ -27,12 +29,17 @@ export default function LoginPage() {
       
       if (response.ok) {
         const data = await response.json()
-        localStorage.setItem("user", JSON.stringify(data.user || data))
-        if (data.access_token) {
-          localStorage.setItem("token", data.access_token)
+        if (isLogin) {
+          localStorage.setItem("user", JSON.stringify(data.user || data))
+          if (data.access_token) {
+            localStorage.setItem("token", data.access_token)
+          }
+          showToast("Login successful!", "success")
+          router.push("/")
+        } else {
+          showToast("Account created successfully! Please login.", "success")
+          setIsLogin(true)
         }
-        showToast(isLogin ? "Login successful!" : "Account created successfully!", "success")
-        router.push("/")
       } else {
         const errorData = await response.json()
         showToast(errorData.detail || "Authentication failed", "error")
@@ -43,9 +50,19 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
-      <Card className="w-full max-w-md">
-        <CardHeader>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 to-slate-800 relative">
+      <BackgroundRippleEffect />
+      <Card className="w-full max-w-md relative z-10">
+        <CardHeader className="text-center">
+          <div className="flex items-center justify-center gap-3 mb-4">
+            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-br from-blue-600 to-blue-700">
+              <TrendingUp className="h-7 w-7 text-white" />
+            </div>
+            <div className="text-left">
+              <h1 className="text-3xl font-bold text-foreground">Pollify</h1>
+              <p className="text-sm text-muted-foreground">Real-time opinion polling</p>
+            </div>
+          </div>
           <CardTitle>{isLogin ? "Login" : "Register"}</CardTitle>
         </CardHeader>
         <CardContent>

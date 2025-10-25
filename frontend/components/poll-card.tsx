@@ -38,15 +38,18 @@ export function PollCard({ poll }: PollCardProps) {
     queryKey: ['like-status', poll.id],
     queryFn: () => {
       const token = localStorage.getItem("token")
+      if (!token) throw new Error("No token")
       return fetch(`http://localhost:8000/polls/${poll.id}/like-status`, {
         headers: { "Authorization": `Bearer ${token}` }
       }).then(res => res.json())
-    }
+    },
+    enabled: !!localStorage.getItem("token")
   })
 
   const likeMutation = useMutation({
     mutationFn: () => {
       const token = localStorage.getItem("token")
+      if (!token) throw new Error("No token")
       return fetch(`http://localhost:8000/polls/${poll.id}/like`, {
         method: "POST",
         headers: { 

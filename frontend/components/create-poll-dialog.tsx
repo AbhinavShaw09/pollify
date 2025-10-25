@@ -22,6 +22,7 @@ export function CreatePollDialog({ open, onOpenChange, onPollCreated }: CreatePo
   const createPollMutation = useMutation({
     mutationFn: (pollData: { question: string; options: string[] }) => {
       const token = localStorage.getItem("token")
+      if (!token) throw new Error("No token")
       return fetch("http://localhost:8000/polls/", {
         method: "POST",
         headers: { 

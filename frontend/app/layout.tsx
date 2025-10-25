@@ -26,6 +26,10 @@ export default function RootLayout({
 
   return (
     <html lang="en" className="dark">
+      <head>
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+        <title>Pollify - Real-time Opinion Polling</title>
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
