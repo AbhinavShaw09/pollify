@@ -32,8 +32,10 @@ export default function Home() {
   const { showToast } = useToast()
 
   const handleLogout = () => {
-    localStorage.removeItem("user")
-    localStorage.removeItem("token")
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem("user")
+      localStorage.removeItem("token")
+    }
     setUser(null)
     showToast("Logged out successfully", "info")
     router.push("/login")
@@ -44,20 +46,24 @@ export default function Home() {
   }
 
   useEffect(() => {
-    const savedUser = localStorage.getItem("user")
-    if (savedUser && savedUser !== "undefined") {
-      try {
-        Promise.resolve().then(() => {
-          setUser(JSON.parse(savedUser))
-          setIsLoading(false)
-        })
-      } catch (error) {
-        localStorage.removeItem("user")
+    if (typeof window !== 'undefined') {
+      const savedUser = localStorage.getItem("user")
+      if (savedUser && savedUser !== "undefined") {
+        try {
+          Promise.resolve().then(() => {
+            setUser(JSON.parse(savedUser))
+            setIsLoading(false)
+          })
+        } catch (error) {
+          localStorage.removeItem("user")
+          router.push("/login")
+        }
+      } else {
+        setIsLoading(false)
         router.push("/login")
       }
     } else {
       setIsLoading(false)
-      router.push("/login")
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])

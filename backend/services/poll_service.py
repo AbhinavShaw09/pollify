@@ -7,6 +7,7 @@ from schemas import poll_schema
 import json
 
 def create_poll(db: Session, poll: poll_schema.PollCreate):
+    from models.user import User
     db_poll = Poll(
         question=poll.question,
         options=json.dumps(poll.options),
@@ -15,7 +16,16 @@ def create_poll(db: Session, poll: poll_schema.PollCreate):
     db.add(db_poll)
     db.commit()
     db.refresh(db_poll)
-    return db_poll
+    
+    # Get username for response
+    user = db.query(User).filter(User.id == poll.creator_id).first()
+    return {
+        "id": db_poll.id,
+        "question": db_poll.question,
+        "options": json.loads(db_poll.options),
+        "likes": db_poll.likes,
+        "username": user.username if user else "Unknown"
+    }
 
 def get_polls(db: Session):
     from models.user import User

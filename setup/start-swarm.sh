@@ -1,62 +1,55 @@
 #!/bin/bash
 
-echo "🐳 Starting Pollify in Docker Swarm Mode..."
+echo "🚀 Starting Pollify Docker Swarm deployment..."
+
+# Check if Docker is running
+if ! docker info > /dev/null 2>&1; then
+    echo "❌ Docker is not running. Please start Docker first."
+    exit 1
+fi
 
 # Initialize swarm if not already initialized
 if ! docker info | grep -q "Swarm: active"; then
-    echo "Initializing Docker Swarm..."
-    docker swarm init
+    echo "🔧 Initializing Docker Swarm..."
+    docker swarm init --advertise-addr 127.0.0.1
 fi
 
-# Remove existing stack if it exists
-if docker stack ls | grep -q pollify; then
-    echo "Removing existing stack..."
-    docker stack rm pollify
-    echo "Waiting for cleanup..."
-    sleep 10
+# Build images first
+echo "🔨 Building Docker images..."
+docker build -t pollify-backend:latest ./backend
+docker build -t pollify-frontend:latest ./frontend
+
+# Create overlay network if it doesn't exist
+if ! docker network ls | grep -q pollify-network; then
+    echo "🌐 Creating overlay network..."
+    docker network create --driver overlay --attachable pollify-network
 fi
 
-# Clean up any remaining networks
-docker network ls | grep pollify_default && docker network rm pollify_default 2>/dev/null || true
+# Deploy the stack
+echo "📦 Deploying Pollify stack..."
+docker stack deploy -c docker-compose.swarm.yml pollify
 
-# Create docker-compose.swarm.yml if it doesn't exist
-if [ ! -f docker-compose.swarm.yml ]; then
-    echo "Creating Swarm configuration..."
-    cat > docker-compose.swarm.yml << EOF
-services:
-  backend:
-    image: pollify-backend:latest
-    build: ./backend
-    ports:
-      - "8000:8000"
-    environment:
-      - DATABASE_URL=sqlite:///./polls.db
-    deploy:
-      replicas: 2
-      restart_policy:
-        condition: on-failure
+# Wait for services to be ready
+echo "⏳ Waiting for services to start..."
+sleep 10
 
-  frontend:
-    image: pollify-frontend:latest
-    build: ./frontend
-    ports:
-      - "3000:3000"
-    depends_on:
-      - backend
-    deploy:
-      replicas: 2
-      restart_policy:
-        condition: on-failure
-EOF
-fi
+# Show service status
+echo "📊 Service Status:"
+docker stack ps pollify
 
-echo "Building images..."
-docker-compose -f docker-compose.swarm.yml build
-
-echo "Deploying stack to swarm..."
-docker stack deploy --detach=false -c docker-compose.swarm.yml pollify
-
-echo "✅ Pollify deployed to Docker Swarm!"
-echo "📱 Frontend: http://localhost:3000"
-echo "🔧 Backend API: http://localhost:8000"
-echo "📊 Check status: docker stack services pollify"
+echo ""
+echo "✅ Pollify deployment complete!"
+echo "🌐 Frontend: http://localhost:3000 (3 replicas with load balancing)"
+echo "🔧 Backend API: http://localhost:8000 (3 replicas with load balancing)"
+echo "📚 API Docs: http://localhost:8000/docs"
+echo ""
+echo "🔧 Scaling Commands:"
+echo "   Scale all to 5: ./setup/scale-swarm.sh --all 5"
+echo "   Scale backend: ./setup/scale-swarm.sh --backend 10"
+echo "   Check status: ./setup/scale-swarm.sh --status"
+echo ""
+echo "📝 To check logs:"
+echo "   Backend: docker service logs pollify_backend -f"
+echo "   Frontend: docker service logs pollify_frontend -f"
+echo ""
+echo "🛑 To stop: ./setup/stop-swarm.sh"

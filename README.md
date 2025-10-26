@@ -66,54 +66,86 @@ Likes: id, poll_id, user_id, created_at
 - **Social Features**: Like polls, comment system, view poll statistics
 - **Responsive Design**: Mobile-first design with dark/light theme support
 
-## How to Run the Project Locally
+## How to Run the Project
 
 ### Prerequisites
-- Docker and Docker Compose
+- Docker and Docker Compose (for staging/production)
+- Python 3.12+ and Node.js 18+ (for local development)
 - Git
 
-### Quick Start with Docker (Recommended)
+### Quick Start
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/AbhinavShaw09/pollify.git
-   cd Pollify
-   ```
+#### 1. Clone the repository
+```bash
+git clone https://github.com/AbhinavShaw09/pollify.git
+cd Pollify
+```
 
-2. **Start with Docker Compose**
-   ```bash
-   # Using setup script
-   ./setup/start.sh
-   
-   # Or manually
-   docker-compose up --build
-   ```
+#### 2. Choose your environment
 
-3. **Start with Docker Swarm (Production)**
-   ```bash
-   ./setup/start-swarm.sh
-   ```
+**Local Development (Recommended for development)**
+```bash
+# Setup dependencies (run once)
+./local-setup/dev-setup.sh
 
-4. **Access the application**
-   - Frontend: http://localhost:3000
-   - Backend API: http://localhost:8000
-   - API Documentation: http://localhost:8000/docs
+# Start both servers
+./start.sh dev
+
+# Or start individually
+./start.sh backend    # Backend only
+./start.sh frontend   # Frontend only
+```
+
+**Staging (Docker)**
+```bash
+./start.sh staging
+```
+
+**Production (Docker Swarm)**
+```bash
+./start.sh production
+```
+
+#### 3. Stop services
+```bash
+# Stop development servers
+./stop.sh dev
+
+# Stop staging
+./stop.sh staging
+
+# Stop production
+./stop.sh production
+```
+
+#### 4. Access the application
+- Frontend: http://localhost:3000
+- Backend API: http://localhost:8000
+- API Documentation: http://localhost:8000/docs
 
 ### Manual Setup (Alternative)
 
-#### Backend Setup
+#### Local Development Setup
 ```bash
+# Backend
 cd backend
-pip install poetry
-poetry install
-python main.py
-```
+pip3 install fastapi uvicorn sqlalchemy pydantic python-jose[cryptography] passlib[bcrypt] python-multipart
+python3 main.py
 
-#### Frontend Setup
-```bash
+# Frontend (in new terminal)
 cd frontend
 npm install
 npm run dev
+```
+
+#### Docker Setup
+```bash
+# Staging
+docker-compose up --build
+
+# Production
+docker swarm init
+docker stack deploy -c docker-compose.swarm.yml pollify
 ```
 
 ### Environment Configuration
@@ -163,6 +195,93 @@ The application uses default configurations suitable for local development:
 - **Docker Multi-stage Builds**: Optimized container images
 - **SQLite**: Lightweight database perfect for development and small deployments
 - **Real-time Polling**: 3-second intervals for live updates without WebSocket complexity
+
+## Future Work and Improvements
+
+### Testing
+- **Backend Testing**: Implement comprehensive test suite using pytest
+  - Unit tests for all service functions
+  - Integration tests for API endpoints
+  - Database testing with test fixtures
+  - Authentication and authorization tests
+- **Frontend Testing**: Add React testing framework
+  - Component unit tests with Jest and React Testing Library
+  - End-to-end tests with Playwright or Cypress
+  - Visual regression testing
+  - Performance testing
+
+### CI/CD Pipeline
+- **GitHub Actions**: Automated testing and deployment
+  - Run tests on pull requests
+  - Build and push Docker images
+  - Automated security scanning
+  - Code quality checks with ESLint and Black
+- **ArgoCD Pipeline**: GitOps deployment strategy
+  - Kubernetes deployment manifests
+  - Automated rollbacks on failure
+  - Multi-environment promotion (dev → staging → production)
+  - Blue-green deployments
+
+### Scaling and Performance
+- **Backend Scaling**:
+  - Database optimization with proper indexing
+  - Query optimization and caching with Redis
+  - Connection pooling for database
+  - API rate limiting and throttling
+  - Horizontal scaling with load balancers
+- **Frontend Scaling**:
+  - Code splitting and lazy loading
+  - CDN integration for static assets
+  - Service Worker for offline functionality
+  - Image optimization and compression
+  - Bundle size optimization
+
+### Database Improvements
+- **Indexing Strategy**:
+  - Add indexes on frequently queried columns (user_id, poll_id, created_at)
+  - Composite indexes for complex queries
+  - Full-text search indexes for poll questions
+- **Query Optimization**:
+  - Implement database query profiling
+  - Add pagination for large result sets
+  - Optimize N+1 query problems
+  - Database connection pooling
+
+### Architecture Enhancements
+- **Microservices**: Split into separate services
+  - User service for authentication
+  - Poll service for poll management
+  - Notification service for real-time updates
+- **Real-time Features**: WebSocket implementation
+  - Live poll results updates
+  - Real-time comments and notifications
+  - User presence indicators
+- **Caching Layer**: Redis integration
+  - Cache frequently accessed polls
+  - Session management
+  - Rate limiting storage
+
+### Security Improvements
+- **Authentication**: Enhanced security measures
+  - OAuth integration (Google, GitHub)
+  - Multi-factor authentication
+  - Password strength requirements
+  - Session timeout management
+- **API Security**:
+  - Input validation and sanitization
+  - SQL injection prevention
+  - XSS protection
+  - CORS policy refinement
+
+### Monitoring and Observability
+- **Logging**: Structured logging implementation
+  - Centralized log aggregation
+  - Error tracking with Sentry
+  - Performance monitoring
+- **Metrics**: Application performance monitoring
+  - Custom metrics for business logic
+  - Database performance metrics
+  - User engagement analytics
 
 ## Contributing
 

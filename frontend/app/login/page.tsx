@@ -29,9 +29,11 @@ export default function LoginPage() {
       if (response.ok) {
         const data = await response.json()
         if (isLogin) {
-          localStorage.setItem("user", JSON.stringify(data.user || data))
-          if (data.access_token) {
-            localStorage.setItem("token", data.access_token)
+          if (typeof window !== 'undefined') {
+            localStorage.setItem("user", JSON.stringify(data.user || data))
+            if (data.access_token) {
+              localStorage.setItem("token", data.access_token)
+            }
           }
           showToast("Login successful!", "success")
           router.push("/")

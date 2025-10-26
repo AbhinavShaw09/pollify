@@ -39,6 +39,10 @@ export function CreatePollDialog({ open, onOpenChange, onPollCreated }: CreatePo
       onOpenChange(false)
       onPollCreated()
       queryClient.invalidateQueries({ queryKey: ['polls'] })
+    },
+    onError: (error) => {
+      console.error('Poll creation failed:', error)
+      alert('Failed to create poll. Please try again.')
     }
   })
   

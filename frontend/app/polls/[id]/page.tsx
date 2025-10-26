@@ -16,13 +16,14 @@ export default function PollDetail({ params }: { params: Promise<{ id: string }>
   const { data: voteStatus } = useQuery({
     queryKey: ['vote-status', id],
     queryFn: () => {
+      if (typeof window === 'undefined') throw new Error("No window")
       const token = localStorage.getItem("token")
       if (!token) throw new Error("No token")
       return fetch(`${API_BASE_URL}/polls/${id}/vote-status`, {
         headers: { "Authorization": `Bearer ${token}` }
       }).then(res => res.json())
     },
-    enabled: !!localStorage.getItem("token")
+    enabled: typeof window !== 'undefined' && !!localStorage.getItem("token")
   })
   
   const hasVoted = voteStatus?.has_voted || false
@@ -45,7 +46,7 @@ export default function PollDetail({ params }: { params: Promise<{ id: string }>
   
   const voteMutation = useMutation({
     mutationFn: (option: string) => {
-      const token = localStorage.getItem("token")
+      const token = typeof window !== 'undefined' ? localStorage.getItem("token") : null
       return fetch(`${API_BASE_URL}/polls/${id}/vote`, {
         method: "POST",
         headers: { 
@@ -63,7 +64,7 @@ export default function PollDetail({ params }: { params: Promise<{ id: string }>
   
   const commentMutation = useMutation({
     mutationFn: (content: string) => {
-      const token = localStorage.getItem("token")
+      const token = typeof window !== 'undefined' ? localStorage.getItem("token") : null
       return fetch(`${API_BASE_URL}/polls/${id}/comments`, {
         method: 'POST',
         headers: { 
