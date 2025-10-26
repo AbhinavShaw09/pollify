@@ -1,0 +1,31 @@
+name: CD
+
+on:
+  push:
+    branches: [ main ]
+    tags: [ 'v*' ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Build Docker images
+      run: |
+        docker build -t pollify-backend ./backend
+        docker build -t pollify-frontend ./frontend
+    
+    - name: Run integration tests
+      run: |
+        docker-compose -f docker-compose.yml up -d
+        sleep 30
+        # Add health checks here
+        docker-compose down
+    
+    # Add deployment steps here (e.g., push to registry, deploy to cloud)
+    - name: Deploy
+      run: |
+        echo "Add deployment commands here"

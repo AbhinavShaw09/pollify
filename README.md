@@ -1,5 +1,7 @@
 # Pollify
 
+[![CI](https://github.com/AbhinavShaw09/pollify/actions/workflows/ci.yml/badge.svg)](https://github.com/AbhinavShaw09/pollify/actions/workflows/ci.yml)
+
 A real-time polling application built with Next.js and FastAPI that allows users to create polls, vote, comment, and interact with each other's content.
 
 ## Screenshots
@@ -24,7 +26,7 @@ Pollify follows a modern full-stack architecture with clear separation between f
 ```
 ┌─────────────────┐    HTTP/REST API   ┌─────────────────┐
 │   Frontend      │◄──────────────────►│   Backend       │
-│   (Next.js)     │                    │   (FastAPI)     │
+│   (Next.js)     │   /api/v1/*        │   (FastAPI)     │
 │   Port: 3000    │                    │   Port: 8000    │
 └─────────────────┘                    └─────────────────┘
                                                 │
@@ -44,11 +46,31 @@ Pollify follows a modern full-stack architecture with clear separation between f
 - **Real-time Updates**: Polling every 3 seconds for live data
 
 ### Backend Architecture (FastAPI)
-- **Framework**: FastAPI with Python 3.12
+- **Framework**: FastAPI with Python 3.12+ following professional structure
 - **Database**: SQLAlchemy ORM with SQLite
 - **Authentication**: JWT-based authentication with bcrypt password hashing
-- **API Design**: RESTful endpoints with Pydantic validation
+- **API Design**: RESTful endpoints with Pydantic validation at `/api/v1/*`
+- **Architecture**: Layered architecture with separation of concerns
 - **Real-time**: WebSocket support for future real-time features
+
+### Professional Backend Structure
+```
+backend/
+├── app/
+│   ├── api/v1/endpoints/     # API route handlers
+│   ├── core/                 # Configuration & security
+│   ├── db/                   # Database session management
+│   ├── models/               # SQLAlchemy ORM models
+│   ├── schemas/              # Pydantic validation schemas
+│   ├── services/             # Business logic layer
+│   ├── repositories/         # Data access layer (ready for scaling)
+│   ├── middleware/           # Custom middleware (ready for scaling)
+│   ├── utils/                # Helper functions
+│   └── tests/                # Comprehensive test suite
+├── alembic/                  # Database migrations
+├── scripts/                  # Utility scripts
+└── .env.example             # Environment configuration template
+```
 
 ### Database Schema
 ```sql
@@ -59,12 +81,19 @@ Comments: id, poll_id, user_id, content, created_at
 Likes: id, poll_id, user_id, created_at
 ```
 
+### API Endpoints
+- **Authentication**: `/api/v1/register`, `/api/v1/login`
+- **Polls**: `/api/v1/polls/*` (CRUD operations, voting, comments, likes)
+- **WebSocket**: `/ws` (real-time communication)
+- **Health Check**: `/` (API status)
+
 ### Key Features
 - **User Authentication**: JWT-based login/register system
 - **Poll Management**: Create polls with multiple options
 - **Real-time Voting**: Vote on polls with live result updates
 - **Social Features**: Like polls, comment system, view poll statistics
 - **Responsive Design**: Mobile-first design with dark/light theme support
+- **Professional Architecture**: Scalable, maintainable codebase structure
 
 ## How to Run the Project
 
@@ -92,7 +121,7 @@ cd Pollify
 ./start.sh dev
 
 # Or start individually
-./start.sh backend    # Backend only
+./start.sh backend    # Backend only (now uses uvicorn with reload)
 ./start.sh frontend   # Frontend only
 ```
 
@@ -122,6 +151,7 @@ cd Pollify
 - Frontend: http://localhost:3000
 - Backend API: http://localhost:8000
 - API Documentation: http://localhost:8000/docs
+- API v1 Endpoints: http://localhost:8000/api/v1/*
 
 ### Manual Setup (Alternative)
 
@@ -129,8 +159,9 @@ cd Pollify
 ```bash
 # Backend
 cd backend
-pip3 install fastapi uvicorn sqlalchemy pydantic python-jose[cryptography] passlib[bcrypt] python-multipart
-python3 main.py
+pip3 install -r requirements.txt
+# Or with poetry: poetry install
+uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 
 # Frontend (in new terminal)
 cd frontend
@@ -149,10 +180,16 @@ docker stack deploy -c docker-compose.swarm.yml pollify
 ```
 
 ### Environment Configuration
-The application uses default configurations suitable for local development:
+Create `.env` file in backend directory based on `.env.example`:
+```bash
+cp backend/.env.example backend/.env
+```
+
+Default configurations:
 - Database: SQLite file (`polls.db`) created automatically
 - CORS: Configured for localhost:3000
 - JWT: Uses default secret (change for production)
+- API Base URL: `http://localhost:8000/api/v1`
 
 ## Research and APIs/Resources Used
 
@@ -168,9 +205,11 @@ The application uses default configurations suitable for local development:
 - **FastAPI**: Modern, fast web framework for building APIs with Python
 - **SQLAlchemy**: Python SQL toolkit and Object-Relational Mapping library
 - **Pydantic**: Data validation using Python type annotations
+- **Pydantic Settings**: Configuration management with environment variables
 - **python-jose**: JavaScript Object Signing and Encryption library for JWT
 - **passlib**: Password hashing library with bcrypt support
 - **uvicorn**: Lightning-fast ASGI server implementation
+- **Alembic**: Database migration tool for SQLAlchemy
 
 ### Development Tools
 - **Docker**: Containerization for consistent development and deployment
@@ -186,15 +225,18 @@ The application uses default configurations suitable for local development:
 
 ### API Design Patterns
 - **RESTful Architecture**: Standard HTTP methods and status codes
+- **API Versioning**: Structured versioning with `/api/v1` prefix
 - **JWT Authentication**: Stateless authentication with Bearer tokens
 - **Pydantic Models**: Request/response validation and serialization
 - **Error Handling**: Consistent error responses with proper HTTP status codes
+- **Layered Architecture**: Separation of API, business logic, and data layers
 
 ### Performance Optimizations
 - **React Query Caching**: Intelligent caching and background updates
 - **Docker Multi-stage Builds**: Optimized container images
 - **SQLite**: Lightweight database perfect for development and small deployments
 - **Real-time Polling**: 3-second intervals for live updates without WebSocket complexity
+- **Hot Reload**: Development server with automatic reload on changes
 
 ## Future Work and Improvements
 
@@ -237,6 +279,7 @@ The application uses default configurations suitable for local development:
   - Bundle size optimization
 
 ### Database Improvements
+- **Migration to PostgreSQL**: For production scalability
 - **Indexing Strategy**:
   - Add indexes on frequently queried columns (user_id, poll_id, created_at)
   - Composite indexes for complex queries
@@ -248,6 +291,7 @@ The application uses default configurations suitable for local development:
   - Database connection pooling
 
 ### Architecture Enhancements
+- **Repository Pattern**: Complete implementation of data access layer
 - **Microservices**: Split into separate services
   - User service for authentication
   - Poll service for poll management
@@ -272,6 +316,7 @@ The application uses default configurations suitable for local development:
   - SQL injection prevention
   - XSS protection
   - CORS policy refinement
+  - Rate limiting middleware
 
 ### Monitoring and Observability
 - **Logging**: Structured logging implementation
@@ -288,7 +333,8 @@ The application uses default configurations suitable for local development:
 1. Fork the repository
 2. Create a feature branch
 3. Make your changes
-4. Submit a pull request
+4. Run tests: `./scripts/test.sh` (backend) or `npm test` (frontend)
+5. Submit a pull request
 
 ## License
 

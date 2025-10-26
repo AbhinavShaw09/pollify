@@ -12,7 +12,7 @@ export default function CreatePoll() {
   const router = useRouter()
   const createPollMutation = useMutation({
     mutationFn: (pollData: { question: string; options: string[]; creator_id: number }) =>
-      fetch("${API_BASE_URL}/polls/", {
+      fetch(`${API_BASE_URL}/polls/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(pollData)

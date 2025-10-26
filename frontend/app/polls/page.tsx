@@ -13,7 +13,7 @@ interface Poll {
 export default function PollsList() {
   const { data: polls = [], isLoading } = useQuery({
     queryKey: ['polls'],
-    queryFn: () => fetch("${API_BASE_URL}/polls/").then(res => res.json())
+    queryFn: () => fetch(`${API_BASE_URL}/polls/`).then(res => res.json())
   })
   if (isLoading) return <div>Loading...</div>
   return (

@@ -1,8 +1,7 @@
 from sqlalchemy.orm import Session
-from sqlalchemy.exc import IntegrityError
-from models.user import User
-from schemas.auth_schema import UserCreate
-from utils.jwt_utils import get_password_hash, verify_password, create_access_token
+from ..models.user import User
+from ..schemas.auth_schema import UserCreate
+from ..core.security import get_password_hash, verify_password, create_access_token
 
 def create_user(db: Session, user: UserCreate):
     # Check if user already exists

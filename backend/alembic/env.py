@@ -10,8 +10,8 @@ import sys
 import os
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/..")
 
-from config.database import Base
-from models import user, polls, vote
+from app.db.session import Base
+from app.models import user, polls, vote, comment, like
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

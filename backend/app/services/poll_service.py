@@ -1,13 +1,13 @@
 from sqlalchemy.orm import Session
-from models.polls import Poll
-from models.vote import Vote
-from models.comment import Comment
-from models.like import Like
-from schemas import poll_schema
+from ..models.polls import Poll
+from ..models.vote import Vote
+from ..models.comment import Comment
+from ..models.like import Like
+from ..schemas import poll_schema
 import json
 
 def create_poll(db: Session, poll: poll_schema.PollCreate):
-    from models.user import User
+    from ..models.user import User
     db_poll = Poll(
         question=poll.question,
         options=json.dumps(poll.options),
@@ -28,7 +28,7 @@ def create_poll(db: Session, poll: poll_schema.PollCreate):
     }
 
 def get_polls(db: Session):
-    from models.user import User
+    from ..models.user import User
     polls = db.query(Poll, User.username).join(User, Poll.creator_id == User.id).all()
     
     result = []
@@ -44,7 +44,7 @@ def get_polls(db: Session):
     return result
 
 def get_poll(db: Session, poll_id: int):
-    from models.user import User
+    from ..models.user import User
     result = db.query(Poll, User.username).join(User, Poll.creator_id == User.id).filter(Poll.id == poll_id).first()
     
     if result:
@@ -120,7 +120,7 @@ def like_poll(db: Session, poll_id: int, user_id: int):
         return {"message": "Poll liked", "liked": True}
 
 def add_comment(db: Session, poll_id: int, comment: poll_schema.CommentCreate):
-    from models.user import User
+    from ..models.user import User
     db_comment = Comment(
         poll_id=poll_id,
         content=comment.content,
@@ -141,7 +141,7 @@ def add_comment(db: Session, poll_id: int, comment: poll_schema.CommentCreate):
     }
 
 def get_comments(db: Session, poll_id: int):
-    from models.user import User
+    from ..models.user import User
     comments = db.query(Comment, User.username).join(User, Comment.user_id == User.id).filter(Comment.poll_id == poll_id).order_by(Comment.created_at.desc()).all()
     
     result = []
@@ -165,7 +165,7 @@ def check_user_liked(db: Session, poll_id: int, user_id: int):
     return {"has_liked": like is not None}
 
 def get_poll_likes(db: Session, poll_id: int):
-    from models.user import User
+    from ..models.user import User
     likes = db.query(Like, User.username).join(User, Like.user_id == User.id).filter(Like.poll_id == poll_id).all()
     
     return [{"username": username} for _, username in likes]
