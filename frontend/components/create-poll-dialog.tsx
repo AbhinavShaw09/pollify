@@ -1,6 +1,7 @@
 "use client"
 
 import type React from "react"
+import { API_BASE_URL } from "@/lib/api"
 import { useState } from "react"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
@@ -18,12 +19,12 @@ export function CreatePollDialog({ open, onOpenChange, onPollCreated }: CreatePo
   const [question, setQuestion] = useState("")
   const [options, setOptions] = useState(["", ""])
   const queryClient = useQueryClient()
-
+  
   const createPollMutation = useMutation({
     mutationFn: (pollData: { question: string; options: string[] }) => {
       const token = localStorage.getItem("token")
       if (!token) throw new Error("No token")
-      return fetch("http://localhost:8000/polls/", {
+      return fetch(`${API_BASE_URL}/polls/`, {
         method: "POST",
         headers: { 
           "Content-Type": "application/json",
@@ -40,41 +41,41 @@ export function CreatePollDialog({ open, onOpenChange, onPollCreated }: CreatePo
       queryClient.invalidateQueries({ queryKey: ['polls'] })
     }
   })
-
+  
   const handleAddOption = () => {
     setOptions([...options, ""])
   }
-
+  
   const handleRemoveOption = (index: number) => {
     setOptions(options.filter((_, i) => i !== index))
   }
-
+  
   const handleOptionChange = (index: number, value: string) => {
     const newOptions = [...options]
     newOptions[index] = value
     setOptions(newOptions)
   }
-
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-
+    
     if (!question.trim()) {
       alert("Please enter a question")
       return
     }
-
+    
     const validOptions = options.filter((opt) => opt.trim())
     if (validOptions.length < 2) {
       alert("Please provide at least 2 options")
       return
     }
-
+    
     createPollMutation.mutate({
       question: question.trim(),
       options: validOptions
     })
   }
-
+  
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
@@ -82,7 +83,7 @@ export function CreatePollDialog({ open, onOpenChange, onPollCreated }: CreatePo
           <DialogTitle>Create a New Poll</DialogTitle>
           <DialogDescription>Ask a question and provide options for people to vote on</DialogDescription>
         </DialogHeader>
-
+        
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Question Input */}
           <div className="space-y-2">
@@ -94,7 +95,7 @@ export function CreatePollDialog({ open, onOpenChange, onPollCreated }: CreatePo
               className="border-border"
             />
           </div>
-
+          
           {/* Options */}
           <div className="space-y-2">
             <label className="text-sm font-medium text-foreground">Options</label>
@@ -122,7 +123,7 @@ export function CreatePollDialog({ open, onOpenChange, onPollCreated }: CreatePo
               ))}
             </div>
           </div>
-
+          
           {/* Add Option Button */}
           <Button
             type="button"
@@ -133,12 +134,12 @@ export function CreatePollDialog({ open, onOpenChange, onPollCreated }: CreatePo
             <Plus className="h-4 w-4" />
             Add Option
           </Button>
-
+          
           {/* Submit Button */}
           <Button
             type="submit"
             disabled={createPollMutation.isPending}
-            className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white"
+            className="w-full bg-linear-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white"
           >
             {createPollMutation.isPending ? "Creating..." : "Create Poll"}
           </Button>

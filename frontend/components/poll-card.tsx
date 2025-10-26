@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { API_BASE_URL } from "@/lib/api"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -23,34 +24,33 @@ interface PollCardProps {
 export function PollCard({ poll }: PollCardProps) {
   const queryClient = useQueryClient()
   const [showLikesModal, setShowLikesModal] = useState(false)
-
+  
   const { data: results = {} } = useQuery({
     queryKey: ['poll-results', poll.id],
-    queryFn: () => fetch(`http://localhost:8000/polls/${poll.id}/results`).then(res => res.json())
+    queryFn: () => fetch(`${API_BASE_URL}/polls/${poll.id}/results`).then(res => res.json())
   })
-
+  
   const { data: comments = [] } = useQuery({
     queryKey: ['poll-comments', poll.id],
-    queryFn: () => fetch(`http://localhost:8000/polls/${poll.id}/comments`).then(res => res.json())
+    queryFn: () => fetch(`${API_BASE_URL}/polls/${poll.id}/comments`).then(res => res.json())
   })
-
+  
   const { data: likeStatus } = useQuery({
     queryKey: ['like-status', poll.id],
     queryFn: () => {
       const token = localStorage.getItem("token")
       if (!token) throw new Error("No token")
-      return fetch(`http://localhost:8000/polls/${poll.id}/like-status`, {
+      return fetch(`${API_BASE_URL}/polls/${poll.id}/like-status`, {
         headers: { "Authorization": `Bearer ${token}` }
       }).then(res => res.json())
     },
     enabled: !!localStorage.getItem("token")
   })
-
+  
   const likeMutation = useMutation({
     mutationFn: () => {
       const token = localStorage.getItem("token")
-      if (!token) throw new Error("No token")
-      return fetch(`http://localhost:8000/polls/${poll.id}/like`, {
+      return fetch(`${API_BASE_URL}/polls/${poll.id}/like`, {
         method: "POST",
         headers: { 
           "Content-Type": "application/json",
@@ -63,14 +63,14 @@ export function PollCard({ poll }: PollCardProps) {
       queryClient.invalidateQueries({ queryKey: ['like-status', poll.id] })
     }
   })
-
-  const totalVotes = Object.values(results.results || {}).reduce((sum: number, count: number) => sum + count, 0)
-
+    
+  const totalVotes = Object.values(results.results || {}).reduce((sum: number, count) => sum + (count as number), 0)
+  
   const getPercentage = (option: string) => {
     const votes = results.results?.[option] || 0
     return totalVotes === 0 ? 0 : Math.round((votes / totalVotes) * 100)
   }
-
+  
   return (
     <Card className="overflow-hidden transition-all duration-300 hover:shadow-lg hover:border-blue-200 dark:hover:border-blue-800">
       <Link href={`/polls/${poll.id}`}>
@@ -83,7 +83,6 @@ export function PollCard({ poll }: PollCardProps) {
             {totalVotes} {totalVotes === 1 ? "vote" : "votes"}
           </p>
         </CardHeader>
-
         <CardContent className="space-y-4 cursor-pointer">
           {/* Options Preview */}
           <div className="space-y-3">
@@ -116,7 +115,6 @@ export function PollCard({ poll }: PollCardProps) {
           </div>
         </CardContent>
       </Link>
-
       {/* Actions */}
       <CardContent className="pt-0">
         <div className="flex gap-2 pt-2 border-t border-border">

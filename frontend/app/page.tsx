@@ -7,8 +7,9 @@ import { CreatePollDialog } from "@/components/create-poll-dialog"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuItem } from "@/components/ui/dropdown-menu"
 import { useToast } from "@/components/ui/toast"
-import { Plus, TrendingUp, User, ChevronDown, Moon, Sun, LogOut } from "lucide-react"
+import { Plus, TrendingUp, User, ChevronDown, Moon, LogOut } from "lucide-react"
 import { useRouter } from "next/navigation"
+import { API_BASE_URL } from "@/lib/api"
 
 interface Poll {
   id: number
@@ -18,14 +19,14 @@ interface Poll {
   username: string
 }
 
+interface UserType {
+  username: string
+  // Add other user properties as needed
+}
+
 export default function Home() {
   const [isCreateOpen, setIsCreateOpen] = useState(false)
-  interface User {
-    username: string
-    // Add other user properties as needed
-  }
-  
-    const [user, setUser] = useState<User | null>(null)
+  const [user, setUser] = useState<UserType | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const router = useRouter()
   const { showToast } = useToast()
@@ -55,13 +56,15 @@ export default function Home() {
         router.push("/login")
       }
     } else {
+      setIsLoading(false)
       router.push("/login")
     }
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const { data: polls = [], isLoading: isPollsLoading } = useQuery({
     queryKey: ['polls'],
-    queryFn: () => fetch("http://localhost:8000/polls/").then(res => res.json()),
+    queryFn: () => fetch(`${API_BASE_URL}/polls/`).then(res => res.json()),
     refetchInterval: 3000 // Real-time updates every 3 seconds
   })
 
@@ -88,7 +91,7 @@ export default function Home() {
                 <p className="text-xs text-muted-foreground">Real-time opinion polling</p>
               </div>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4">
               {user ? (
                 <>
                   <Button
@@ -131,7 +134,6 @@ export default function Home() {
           </div>
         </div>
       </header>
-
       {/* Main Content */}
       <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
         {isPollsLoading ? (
@@ -159,7 +161,6 @@ export default function Home() {
           </div>
         )}
       </main>
-
       {/* Create Poll Dialog */}
       <CreatePollDialog open={isCreateOpen} onOpenChange={setIsCreateOpen} onPollCreated={handlePollCreated} />
     </div>

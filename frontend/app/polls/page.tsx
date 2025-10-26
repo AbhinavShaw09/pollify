@@ -1,24 +1,21 @@
 "use client"
 
 import { useQuery } from "@tanstack/react-query"
+import { API_BASE_URL } from "@/lib/api"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
-
 interface Poll {
   id: number
   question: string
   options: string[]
   likes: number
 }
-
 export default function PollsList() {
   const { data: polls = [], isLoading } = useQuery({
     queryKey: ['polls'],
-    queryFn: () => fetch("http://localhost:8000/polls/").then(res => res.json())
+    queryFn: () => fetch("${API_BASE_URL}/polls/").then(res => res.json())
   })
-
   if (isLoading) return <div>Loading...</div>
-
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
@@ -28,7 +25,6 @@ export default function PollsList() {
             <Button>Create Poll</Button>
           </Link>
         </div>
-
         <div className="grid gap-4">
           {polls.map((poll: Poll) => (
             <Link key={poll.id} href={`/polls/${poll.id}`}>

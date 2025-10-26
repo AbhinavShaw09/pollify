@@ -82,10 +82,19 @@ Likes: id, poll_id, user_id, created_at
 
 2. **Start with Docker Compose**
    ```bash
+   # Using setup script
+   ./setup/start.sh
+   
+   # Or manually
    docker-compose up --build
    ```
 
-3. **Access the application**
+3. **Start with Docker Swarm (Production)**
+   ```bash
+   ./setup/start-swarm.sh
+   ```
+
+4. **Access the application**
    - Frontend: http://localhost:3000
    - Backend API: http://localhost:8000
    - API Documentation: http://localhost:8000/docs

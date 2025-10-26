@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, use } from "react"
+import { API_BASE_URL } from "@/lib/api"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -9,43 +10,43 @@ import Link from "next/link"
 export default function PollDetail({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
   const [selectedOption, setSelectedOption] = useState("")
+  const [newComment, setNewComment] = useState("")
+  const queryClient = useQueryClient()
+  
   const { data: voteStatus } = useQuery({
     queryKey: ['vote-status', id],
     queryFn: () => {
       const token = localStorage.getItem("token")
       if (!token) throw new Error("No token")
-      return fetch(`http://localhost:8000/polls/${id}/vote-status`, {
+      return fetch(`${API_BASE_URL}/polls/${id}/vote-status`, {
         headers: { "Authorization": `Bearer ${token}` }
       }).then(res => res.json())
     },
     enabled: !!localStorage.getItem("token")
   })
-
+  
   const hasVoted = voteStatus?.has_voted || false
   const userVote = voteStatus?.selected_option
-  const [newComment, setNewComment] = useState("")
-  const queryClient = useQueryClient()
 
   const { data: poll } = useQuery({
     queryKey: ['poll', id],
-    queryFn: () => fetch(`http://localhost:8000/polls/${id}`).then(res => res.json())
+    queryFn: () => fetch(`${API_BASE_URL}/polls/${id}`).then(res => res.json())
   })
-
+  
   const { data: results = {} } = useQuery({
     queryKey: ['poll-results', id],
-    queryFn: () => fetch(`http://localhost:8000/polls/${id}/results`).then(res => res.json())
+    queryFn: () => fetch(`${API_BASE_URL}/polls/${id}/results`).then(res => res.json())
   })
-
+  
   const { data: comments = [] } = useQuery({
     queryKey: ['poll-comments', id],
-    queryFn: () => fetch(`http://localhost:8000/polls/${id}/comments`).then(res => res.json())
+    queryFn: () => fetch(`${API_BASE_URL}/polls/${id}/comments`).then(res => res.json())
   })
-
+  
   const voteMutation = useMutation({
     mutationFn: (option: string) => {
       const token = localStorage.getItem("token")
-      if (!token) throw new Error("No token")
-      return fetch(`http://localhost:8000/polls/${id}/vote`, {
+      return fetch(`${API_BASE_URL}/polls/${id}/vote`, {
         method: "POST",
         headers: { 
           "Content-Type": "application/json",
@@ -59,16 +60,15 @@ export default function PollDetail({ params }: { params: Promise<{ id: string }>
       queryClient.invalidateQueries({ queryKey: ['vote-status', id] })
     }
   })
-
+  
   const commentMutation = useMutation({
     mutationFn: (content: string) => {
       const token = localStorage.getItem("token")
-      if (!token) throw new Error("No token")
-      return fetch(`http://localhost:8000/polls/${id}/comments`, {
-        method: "POST",
+      return fetch(`${API_BASE_URL}/polls/${id}/comments`, {
+        method: 'POST',
         headers: { 
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({ content })
       })
@@ -78,25 +78,25 @@ export default function PollDetail({ params }: { params: Promise<{ id: string }>
       queryClient.invalidateQueries({ queryKey: ['poll-comments', id] })
     }
   })
-
+  
   if (!poll) return <div>Loading...</div>
-
-  const totalVotes = Object.values(results.results || {}).reduce((sum: number, count: number) => sum + count, 0)
-
+  
+  const totalVotes = Object.values(results.results || {}).reduce((sum: number, count) => sum + (count as number), 0)
+  
   return (
     <div className="min-h-screen bg-background p-4">
       <div className="max-w-4xl mx-auto">
         <Link href="/">
           <Button variant="ghost">← Back</Button>
         </Link>
-
+        
         <div className="grid md:grid-cols-2 gap-6 mt-6">
           {/* Poll Section */}
           <div className="space-y-4">
             <h1 className="text-2xl font-bold">{poll.question}</h1>
             <p className="text-sm text-muted-foreground">by {poll.username}</p>
             <p className="text-muted-foreground">{totalVotes} votes</p>
-
+            
             {!hasVoted ? (
               <div className="space-y-3">
                 {poll.options?.map((option: string) => (
@@ -144,7 +144,7 @@ export default function PollDetail({ params }: { params: Promise<{ id: string }>
               </div>
             )}
           </div>
-
+          
           {/* Comments Section */}
           <div className="space-y-4">
             <h2 className="text-xl font-semibold">Comments ({comments.length})</h2>
@@ -162,7 +162,7 @@ export default function PollDetail({ params }: { params: Promise<{ id: string }>
                 Post Comment
               </Button>
             </form>
-
+            
             <div className="space-y-3 max-h-96 overflow-y-auto">
               {comments.map((comment: any) => (
                 <div key={comment.id} className="p-3 bg-muted rounded">

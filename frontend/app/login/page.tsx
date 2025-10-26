@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { API_BASE_URL } from "@/lib/api"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -8,20 +9,18 @@ import { useRouter } from "next/navigation"
 import { useToast } from "@/components/ui/toast"
 import { TrendingUp } from "lucide-react"
 import { BackgroundRippleEffect } from "@/components/ui/background-ripple-effect"
-
 export default function LoginPage() {
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
   const [isLogin, setIsLogin] = useState(true)
   const router = useRouter()
   const { showToast } = useToast()
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     const endpoint = isLogin ? "/login" : "/register"
     
     try {
-      const response = await fetch(`http://localhost:8000${endpoint}`, {
+      const response = await fetch(`${API_BASE_URL}${endpoint}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password })
@@ -48,7 +47,6 @@ export default function LoginPage() {
       showToast("Something went wrong", "error")
     }
   }
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 to-slate-800 relative">
       <BackgroundRippleEffect />

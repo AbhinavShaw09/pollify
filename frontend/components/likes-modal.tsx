@@ -1,22 +1,20 @@
 "use client"
 
 import { useQuery } from "@tanstack/react-query"
+import { API_BASE_URL } from "@/lib/api"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Heart } from "lucide-react"
-
 interface LikesModalProps {
   pollId: number
   open: boolean
   onOpenChange: (open: boolean) => void
 }
-
 export function LikesModal({ pollId, open, onOpenChange }: LikesModalProps) {
   const { data: likes = [] } = useQuery({
     queryKey: ['poll-likes', pollId],
-    queryFn: () => fetch(`http://localhost:8000/polls/${pollId}/likes`).then(res => res.json()),
+    queryFn: () => fetch(`${API_BASE_URL}/polls/${pollId}/likes`).then(res => res.json()),
     enabled: open
   })
-
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
@@ -42,4 +40,4 @@ export function LikesModal({ pollId, open, onOpenChange }: LikesModalProps) {
       </DialogContent>
     </Dialog>
   )
-}
+};
