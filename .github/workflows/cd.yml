@@ -20,10 +20,10 @@ jobs:
     
     - name: Run integration tests
       run: |
-        docker-compose -f docker-compose.yml up -d
+        docker compose -f docker-compose.yml up -d
         sleep 30
         # Add health checks here
-        docker-compose down
+        docker compose down
     
     # NOTE: Add deployment steps here (e.g., push to registry, deploy to cloud) in future
     - name: Deploy
