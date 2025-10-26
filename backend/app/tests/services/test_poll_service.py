@@ -1,7 +1,11 @@
 import pytest
 import json
-from ...services import poll_service
-from ...schemas.poll_schema import PollCreate, CommentCreate
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+
+from app.services import poll_service
+from app.schemas.poll_schema import PollCreate, CommentCreate
 
 def test_create_poll(db_session, test_user):
     poll_data = PollCreate(

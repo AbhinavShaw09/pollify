@@ -31,7 +31,6 @@ jobs:
       run: |
         cd backend
         pip install -r requirements.txt
-        pip install pytest httpx
         python -m pytest app/tests/test_security.py -v
     
     - name: Test Frontend

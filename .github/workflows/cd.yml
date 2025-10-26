@@ -25,7 +25,7 @@ jobs:
         # Add health checks here
         docker-compose down
     
-    # Add deployment steps here (e.g., push to registry, deploy to cloud)
+    # NOTE: Add deployment steps here (e.g., push to registry, deploy to cloud) in future
     - name: Deploy
       run: |
         echo "Add deployment commands here"

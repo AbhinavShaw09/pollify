@@ -20,18 +20,14 @@ jobs:
     
     - name: Install dependencies
       run: |
-        pip install flake8 black isort
+        cd backend
+        pip install ruff
     
-    - name: Lint with flake8
+    - name: Lint and format with ruff
       run: |
         cd backend
-        flake8 app --count --select=E9,F63,F7,F82 --show-source --statistics
-        flake8 app --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-    
-    - name: Check formatting with black
-      run: |
-        cd backend
-        black --check app
+        ruff check app --output-format=github
+        ruff format app --check
     
   lint-frontend:
     runs-on: ubuntu-latest

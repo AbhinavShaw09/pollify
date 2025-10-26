@@ -1,6 +1,10 @@
 import pytest
-from ...services.auth_service import create_user, authenticate_user, create_user_token
-from ...schemas.auth_schema import UserCreate
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+
+from app.services.auth_service import create_user, authenticate_user, create_user_token
+from app.schemas.auth_schema import UserCreate
 
 def test_create_user_success(db_session):
     user_data = UserCreate(username="newuser", password="password123")

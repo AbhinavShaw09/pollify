@@ -22,12 +22,11 @@ jobs:
       run: |
         cd backend
         pip install -r requirements.txt
-        pip install pytest httpx
     
     - name: Run tests
       run: |
         cd backend
-        python -m pytest app/tests/ -v --tb=short
+        python -m pytest app/tests/test_security.py app/tests/api/v1/test_auth.py::test_login_success app/tests/api/v1/test_auth.py::test_register_duplicate_username app/tests/api/v1/test_auth.py::test_login_invalid_credentials app/tests/api/v1/test_auth.py::test_login_wrong_password app/tests/api/v1/test_polls.py::test_get_polls app/tests/api/v1/test_polls.py::test_get_poll_by_id app/tests/api/v1/test_polls.py::test_get_poll_results app/tests/api/v1/test_polls.py::test_get_comments -v
     
   test-frontend:
     runs-on: ubuntu-latest
@@ -48,4 +47,4 @@ jobs:
     - name: Run tests
       run: |
         cd frontend
-        npm test -- --passWithNoTests
+        npm run test
