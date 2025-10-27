@@ -44,6 +44,7 @@ Pollify follows a modern full-stack architecture with clear separation between f
 - **Authentication**: JWT tokens stored in localStorage
 - **UI Components**: Radix UI primitives with custom styling
 - **Real-time Updates**: Polling every 3 seconds for live data
+- **Structure**: Organized `src/` directory with feature-based component organization
 
 ### Backend Architecture (FastAPI)
 - **Framework**: FastAPI with Python 3.12+ following professional structure
@@ -71,6 +72,8 @@ backend/
 ├── scripts/                  # Utility scripts
 └── .env.example             # Environment configuration template
 ```
+
+
 
 ### Database Schema
 ```sql
