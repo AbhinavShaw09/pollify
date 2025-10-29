@@ -1,27 +1,13 @@
 from datetime import datetime, timedelta
 from jose import JWTError, jwt
-from passlib.context import CryptContext
 import hashlib
 from .config import settings
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
 def verify_password(plain_password: str, hashed_password: str) -> bool:
-    # Try bcrypt first (new format) with same pre-hashing logic
-    try:
-        # Pre-hash with SHA256 if password is long, then verify with bcrypt
-        if len(plain_password.encode('utf-8')) > 72:
-            plain_password = hashlib.sha256(plain_password.encode('utf-8')).hexdigest()
-        return pwd_context.verify(plain_password, hashed_password)
-    except:
-        # Fallback to SHA256 (old format) for backward compatibility
-        return hashlib.sha256(plain_password.encode()).hexdigest() == hashed_password
+    return hashlib.sha256(plain_password.encode()).hexdigest() == hashed_password
 
 def get_password_hash(password: str) -> str:
-    # Pre-hash with SHA256 if password is long, then bcrypt the result
-    if len(password.encode('utf-8')) > 72:
-        password = hashlib.sha256(password.encode('utf-8')).hexdigest()
-    return pwd_context.hash(password)
+    return hashlib.sha256(password.encode()).hexdigest()
 
 def create_access_token(data: dict, expires_delta: timedelta = None):
     to_encode = data.copy()
