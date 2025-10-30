@@ -1,174 +1,114 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { useQuery } from "@tanstack/react-query"
-import { PollCard } from "@/components/features/polls/poll-card"
-import { CreatePollDialog } from "@/components/features/polls/create-poll-dialog"
+import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
-import { DropdownMenu, DropdownMenuItem } from "@/components/ui/dropdown-menu"
-import { useToast } from "@/components/ui/toast"
-import { Plus, TrendingUp, User, ChevronDown, Moon, LogOut } from "lucide-react"
+import { TrendingUp, BarChart3, Users, Zap, ArrowRight } from "lucide-react"
 import { useRouter } from "next/navigation"
-import { API_BASE_URL } from "@/lib/api/endpoints"
+import { BackgroundRippleEffect } from "@/components/ui/background-ripple-effect"
 
-interface Poll {
-  id: number
-  question: string
-  options: string[]
-  likes: number
-  username: string
-}
-
-interface UserType {
-  username: string
-  // Add other user properties as needed
-}
-
-export default function Home() {
-  const [isCreateOpen, setIsCreateOpen] = useState(false)
-  const [user, setUser] = useState<UserType | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
+export default function LandingPage() {
+  const [user, setUser] = useState(null)
   const router = useRouter()
-  const { showToast } = useToast()
-
-  const handleLogout = () => {
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem("user")
-      localStorage.removeItem("token")
-    }
-    setUser(null)
-    showToast("Logged out successfully", "info")
-    router.push("/login")
-  }
-
-  const toggleTheme = () => {
-    document.documentElement.classList.toggle('dark')
-  }
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const savedUser = localStorage.getItem("user")
       if (savedUser && savedUser !== "undefined") {
-        try {
-          Promise.resolve().then(() => {
-            setUser(JSON.parse(savedUser))
-            setIsLoading(false)
-          })
-        } catch (error) {
-          localStorage.removeItem("user")
-          router.push("/login")
-        }
-      } else {
-        setIsLoading(false)
-        router.push("/login")
+        router.push("/dashboard")
       }
-    } else {
-      setIsLoading(false)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  const { data: polls = [], isLoading: isPollsLoading } = useQuery({
-    queryKey: ['polls'],
-    queryFn: () => fetch(`${API_BASE_URL}/polls/`).then(res => res.json()),
-    refetchInterval: 3000 // Real-time updates every 3 seconds
-  })
-
-  const handlePollCreated = () => {
-    setIsCreateOpen(false)
-  }
-
-  if (isLoading) {
-    return <div className="min-h-screen flex items-center justify-center">Loading...</div>
-  }
+  }, [router])
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-background via-background to-slate-50 dark:to-slate-950">
+    <div className="min-h-screen bg-linear-to-br from-slate-900 via-blue-900 to-slate-800 relative overflow-hidden">
+      <BackgroundRippleEffect />
+      
       {/* Header */}
-      <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
-        <div className="mx-auto max-w-6xl px-4 py-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-linear-to-br from-blue-600 to-blue-700">
-                <TrendingUp className="h-6 w-6 text-white" />
-              </div>
-              <div>
-                <h1 className="text-2xl font-bold text-foreground">Pollify</h1>
-                <p className="text-xs text-muted-foreground">Real-time opinion polling</p>
-              </div>
+      <header className="relative z-10 px-4 py-6">
+        <div className="mx-auto max-w-6xl flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-linear-to-br from-blue-600 to-blue-700">
+              <TrendingUp className="h-6 w-6 text-white" />
             </div>
-            <div className="flex items-center gap-4">
-              {user ? (
-                <>
-                  <Button
-                    onClick={() => setIsCreateOpen(true)}
-                    className="gap-2 bg-linear-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800"
-                  >
-                    <Plus className="h-4 w-4" />
-                    Create Poll
-                  </Button>
-                  <DropdownMenu
-                    trigger={
-                      <Button variant="outline" className="gap-2">
-                        <User className="h-4 w-4" />
-                        {user.username}
-                        <ChevronDown className="h-4 w-4" />
-                      </Button>
-                    }
-                  >
-                    <DropdownMenuItem onClick={toggleTheme} className="flex items-center gap-2">
-                      <Moon className="h-4 w-4" />
-                      Toggle Theme
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={handleLogout} className="flex items-center gap-2">
-                      <LogOut className="h-4 w-4" />
-                      Logout
-                    </DropdownMenuItem>
-                  </DropdownMenu>
-                </>
-              ) : (
-                <Button
-                  onClick={() => router.push("/login")}
-                  variant="outline"
-                  className="gap-2"
-                >
-                  <User className="h-4 w-4" />
-                  Login
-                </Button>
-              )}
+            <div>
+              <h1 className="text-2xl font-bold text-white">Pollify</h1>
+              <p className="text-xs text-blue-200">Real-time opinion polling</p>
             </div>
+          </div>
+          <div className="flex items-center gap-3">
+            <Button 
+              variant="ghost" 
+              className="text-white hover:bg-white/10"
+              onClick={() => router.push("/login")}
+            >
+              Login
+            </Button>
+            <Button 
+              className="bg-linear-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800"
+              onClick={() => router.push("/login")}
+            >
+              Get Started
+            </Button>
           </div>
         </div>
       </header>
-      {/* Main Content */}
-      <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
-        {isPollsLoading ? (
-          <div className="flex items-center justify-center py-12">
-            <div className="h-8 w-8 animate-spin rounded-full border-4 border-border border-t-blue-600" />
-          </div>
-        ) : polls.length === 0 ? (
-          <div className="rounded-lg border border-border bg-card p-12 text-center">
-            <TrendingUp className="mx-auto h-12 w-12 text-muted-foreground" />
-            <h2 className="mt-4 text-xl font-semibold text-foreground">No polls yet</h2>
-            <p className="mt-2 text-muted-foreground">Be the first to create a poll and start gathering opinions!</p>
-            <Button
-              onClick={() => setIsCreateOpen(true)}
-              className="mt-6 gap-2 bg-linear-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800"
+
+      {/* Hero Section */}
+      <main className="relative z-10 px-4 py-20">
+        <div className="mx-auto max-w-4xl text-center">
+          <h2 className="text-5xl md:text-6xl font-bold text-white mb-6">
+            Create Polls,
+            <span className="bg-linear-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent"> Gather Opinions</span>
+          </h2>
+          <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
+            Build engaging polls, collect real-time responses, and make data-driven decisions with our modern polling platform.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Button 
+              size="lg" 
+              className="bg-linear-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-lg px-8 py-3 text-white hover:cursor-pointer"
+              onClick={() => router.push("/login")}
             >
-              <Plus className="h-4 w-4" />
-              Create First Poll
+              Start Polling <ArrowRight className="ml-2 h-5 w-5" />
+            </Button>
+            <Button 
+              size="lg" 
+              variant="outline" 
+              className="border-blue-400 text-blue-400 hover:bg-blue-400 hover:text-white text-lg px-8 py-3 hover:cursor-pointer"
+              onClick={() => router.push("/login")}
+            >
+              View Demo
             </Button>
           </div>
-        ) : (
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {polls.map((poll: Poll) => (
-              <PollCard key={poll.id} poll={poll} />
-            ))}
+        </div>
+
+        {/* Features */}
+        <div className="mx-auto max-w-6xl mt-20">
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="text-center p-6 rounded-lg bg-white/5 backdrop-blur-sm border border-white/10">
+              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-linear-to-br from-blue-600 to-blue-700 mx-auto mb-4">
+                <BarChart3 className="h-6 w-6 text-white" />
+              </div>
+              <h3 className="text-xl font-semibold text-white mb-2">Real-time Results</h3>
+              <p className="text-blue-100">Watch poll results update live as votes come in</p>
+            </div>
+            <div className="text-center p-6 rounded-lg bg-white/5 backdrop-blur-sm border border-white/10">
+              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-linear-to-br from-blue-600 to-blue-700 mx-auto mb-4">
+                <Users className="h-6 w-6 text-white" />
+              </div>
+              <h3 className="text-xl font-semibold text-white mb-2">Social Features</h3>
+              <p className="text-blue-100">Like, comment, and engage with community polls</p>
+            </div>
+            <div className="text-center p-6 rounded-lg bg-white/5 backdrop-blur-sm border border-white/10">
+              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-linear-to-br from-blue-600 to-blue-700 mx-auto mb-4">
+                <Zap className="h-6 w-6 text-white" />
+              </div>
+              <h3 className="text-xl font-semibold text-white mb-2">Easy to Use</h3>
+              <p className="text-blue-100">Create and share polls in seconds with our intuitive interface</p>
+            </div>
           </div>
-        )}
+        </div>
       </main>
-      {/* Create Poll Dialog */}
-      <CreatePollDialog open={isCreateOpen} onOpenChange={setIsCreateOpen} onPollCreated={handlePollCreated} />
     </div>
   )
 }

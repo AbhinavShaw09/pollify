@@ -1,6 +1,7 @@
 "use client"
 
 import { useQuery } from "@tanstack/react-query"
+import DelayedLoader from "@/components/shared/DelayedLoader"
 import { API_BASE_URL } from "@/lib/api/endpoints"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
@@ -15,7 +16,7 @@ export default function PollsList() {
     queryKey: ['polls'],
     queryFn: () => fetch(`${API_BASE_URL}/polls/`).then(res => res.json())
   })
-  if (isLoading) return <div>Loading...</div>
+  if (isLoading) return <DelayedLoader loading={true} />
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">

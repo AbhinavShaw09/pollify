@@ -36,7 +36,7 @@ export default function LoginPage() {
             }
           }
           showToast("Login successful!", "success")
-          router.push("/")
+          router.push("/dashboard")
         } else {
           showToast("Account created successfully! Please login.", "success")
           setIsLogin(true)
@@ -50,12 +50,12 @@ export default function LoginPage() {
     }
   }
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 to-slate-800 relative">
+    <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-slate-900 to-slate-800 relative">
       <BackgroundRippleEffect />
-      <Card className="w-full max-w-md relative z-10">
+      <Card className="w-full max-w-md relative z-10 mx-2.5">
         <CardHeader className="text-center">
           <div className="flex items-center justify-center gap-3 mb-4">
-            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-br from-blue-600 to-blue-700">
+            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-linear-to-br from-blue-600 to-blue-700">
               <TrendingUp className="h-7 w-7 text-white" />
             </div>
             <div className="text-left">

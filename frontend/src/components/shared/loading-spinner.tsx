@@ -1,3 +1,3 @@
-// Loading spinner component
-// TODO: Implement loading spinner
+import DelayedLoader from './DelayedLoader';
 
+export default DelayedLoader;

@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, use } from "react"
+import DelayedLoader from "@/components/shared/DelayedLoader"
 import { API_BASE_URL } from "@/lib/api/endpoints"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { Button } from "@/components/ui/button"
@@ -80,7 +81,7 @@ export default function PollDetail({ params }: { params: Promise<{ id: string }>
     }
   })
   
-  if (!poll) return <div>Loading...</div>
+  if (!poll) return <DelayedLoader loading={true} />
   
   const totalVotes = Object.values(results.results || {}).reduce((sum: number, count) => sum + (count as number), 0)
   

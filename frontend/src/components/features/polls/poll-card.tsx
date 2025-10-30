@@ -93,7 +93,7 @@ export function PollCard({ poll }: PollCardProps) {
                 <div key={option} className="w-full">
                   <div className="relative overflow-hidden rounded-lg border border-border bg-muted/50">
                     <div
-                      className="absolute inset-y-0 left-0 bg-gradient-to-r from-blue-500 to-blue-600 transition-all duration-500"
+                      className="absolute inset-y-0 left-0 bg-linear-to-r from-blue-500 to-blue-600 transition-all duration-500"
                       style={{ width: `${percentage}%` }}
                     />
                     <div className="relative flex items-center justify-between px-4 py-3">
