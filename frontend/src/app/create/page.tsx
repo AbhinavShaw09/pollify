@@ -42,7 +42,7 @@ export default function CreatePoll() {
       <div className="container mx-auto px-4 py-8 max-w-2xl">
         <div className="mb-6">
           <Link href="/">
-            <Button variant="ghost">← Back</Button>
+            <Button variant="ghost">← Backs</Button>
           </Link>
         </div>
         <h1 className="text-3xl font-bold mb-8">Create New Poll</h1>

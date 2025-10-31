@@ -38,13 +38,13 @@ export default function LandingPage() {
           <div className="flex items-center gap-3">
             <Button 
               variant="ghost" 
-              className="text-white hover:bg-white/10"
+              className="text-white hover:bg-white/10 hover:text-white hover:cursor-pointer"
               onClick={() => router.push("/login")}
             >
               Login
             </Button>
             <Button 
-              className="bg-linear-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800"
+              className="bg-linear-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white hover:cursor-pointer"
               onClick={() => router.push("/login")}
             >
               Get Started

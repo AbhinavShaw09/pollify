@@ -126,7 +126,7 @@ export function PollCard({ poll }: PollCardProps) {
               likeMutation.mutate()
             }}
             disabled={likeMutation.isPending}
-            className={`flex-1 gap-2 ${likeStatus?.has_liked ? "text-red-500" : "text-muted-foreground"} hover:text-red-500`}
+            className={`flex-1 gap-2 ${likeStatus?.has_liked ? "text-blue-500" : "text-muted-foreground"} hover:blue-red-500`}
           >
             <Heart className="h-4 w-4" fill={likeStatus?.has_liked ? "currentColor" : "none"} />
             <span 

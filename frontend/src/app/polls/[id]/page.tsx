@@ -89,7 +89,7 @@ export default function PollDetail({ params }: { params: Promise<{ id: string }>
     <div className="min-h-screen bg-background p-4">
       <div className="max-w-4xl mx-auto">
         <Link href="/">
-          <Button variant="ghost">← Back</Button>
+          <Button variant="ghost" className="hover:cursor-pointer">← Back</Button>
         </Link>
         
         <div className="grid md:grid-cols-2 gap-6 mt-6">

@@ -112,7 +112,7 @@ export default function Dashboard() {
             <div className="flex items-center gap-4">
               <DropdownMenu
                 trigger={
-                  <Button variant="outline" className="gap-2">
+                  <Button variant="outline" className="gap-2 hover:text-white hover:cursor-pointer">
                     <User className="h-4 w-4" />
                     {user.username}
                     <ChevronDown className="h-4 w-4" />
